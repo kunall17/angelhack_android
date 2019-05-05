@@ -161,28 +161,45 @@ export class BillingScreen extends React.Component<{}, BillingScreenState> {
                         placeholder: 'User Name',
                     }}
                 />
-                <View style={{ flex: 1, alignSelf: 'stretch' }}>
-                    <FlatList
-                        data={fragList}
-                        renderItem={({ item }) => {
-                            const { key } = item;
-                            if (this._isFragItemAct(item)) {
-                                const { headingProps, textInputModalProps } = item;
-                                return (
-                                    <HeadingComp {...headingProps}>
-                                        <TextInputModal {...textInputModalProps} />
-                                    </HeadingComp>
-                                )
-                            } else {
-                                const { headingProps, textInputProps } = item;
-                                return (
-                                    <HeadingComp  {...headingProps}>
-                                        <TextInput {...textInputProps} />
-                                    </HeadingComp>
-                                )
-                            }
-                        }}
-                    />
+                <View style={{ flex: 1, alignSelf: 'stretch', flexDirection: 'row' }}>
+                    <View style={{ flex: 1 }}>
+                        <FlatList
+                            data={fragList}
+                            renderItem={({ item }) => {
+                                const { key } = item;
+                                if (this._isFragItemAct(item)) {
+                                    const { headingProps, textInputModalProps } = item;
+                                    return (
+                                        <HeadingComp {...headingProps}>
+                                            <TextInputModal {...textInputModalProps} />
+                                        </HeadingComp>
+                                    )
+                                } else {
+                                    const { headingProps, textInputProps } = item;
+                                    return (
+                                        <HeadingComp  {...headingProps}>
+                                            <TextInput {...textInputProps} />
+                                        </HeadingComp>
+                                    )
+                                }
+                            }}
+                        />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <FlatList
+                            data={this.state.billingItems}
+                            renderItem={({ item }) => {
+                                const { name, rate, quantity } = item;
+                                return <ListItem
+                                    title={name}
+                                    rightTitle={(rate * quantity).toString()}
+                                />
+                            }}
+                        />
+
+                    </View>
+
+
                 </View>
                 <ButtonGroup
                     buttons={['Add Item', 'Done']}
