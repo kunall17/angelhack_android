@@ -4,6 +4,7 @@ import android.app.Application;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import io.invertase.firebase.RNFirebasePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -27,10 +28,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
             new RNFirebasePackage(),
             new VectorIconsPackage(),
             new RNGestureHandlerPackage(),
-            new RNFirebasePackage(),
             new RNFirebaseMessagingPackage()
       );
     }
