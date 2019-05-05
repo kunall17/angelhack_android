@@ -21,16 +21,14 @@ class HeadingComp extends React.Component<HeadingCompInterface> {
 }
 
 const styles = StyleSheet.create({
-    labelStyle: {
-        fontSize: 18,
-    },
+    labelStyle: { fontSize: 18, },
     labelContainerStyle: {
         marginLeft: 10,
     },
     containerStyle: {
-        flexDirection: 'column',
         marginTop: 10,
         marginBottom: 5,
+        backgroundColor: 'green',
     },
     inputContainerStyle: {
         marginRight: 10,

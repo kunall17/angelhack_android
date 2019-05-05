@@ -7,13 +7,9 @@ export class TextInputModal extends React.Component<TextInputModalProps> {
         const { touchableProps, textInputProps } = this.props;
 
         return (
-            <TouchableOpacity {...{ style: { flex: 1, backgroundColor: 'blue' } }}>
+            <TouchableOpacity {...{ style: { backgroundColor: 'blue', alignSelf: 'stretch' } }}>
                 <TextInput {...{ editable: false, ...textInputProps, }} />
             </TouchableOpacity>
-
-            // <TouchableOpacity {...touchableProps }>
-            //     <TextInput {...{ editable: false, ...textInputProps, }} />
-            // </TouchableOpacity>
         )
     }
 }

@@ -164,9 +164,11 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
                             if (this._isFragItemAct(item)) {
                                 const { headingProps, textInputModalProps } = item;
                                 return (
-                                    <HeadingComp {...headingProps}>
-                                        <TextInputModal {...textInputModalProps} />
-                                    </HeadingComp>
+                                    <View style={{ alignSelf: 'stretch', backgroundColor: 'red', }}>
+                                        <HeadingComp {...headingProps}>
+                                            <TextInputModal {...textInputModalProps} />
+                                        </HeadingComp>
+                                    </View>
                                 )
                             } else {
                                 const { headingProps, textInputProps } = item;
