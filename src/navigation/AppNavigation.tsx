@@ -1,7 +1,7 @@
-import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
+import { createAppContainer, createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import { BillingScreen } from '../BillingScreen';
 
-const billingTabNavigator = createBottomTabNavigator({
+const billingTabNavigator = createStackNavigator({
     'BillingScreen': { screen: BillingScreen },
 });
 

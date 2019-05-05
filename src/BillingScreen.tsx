@@ -5,7 +5,7 @@ import { ListItem, ButtonGroup } from 'react-native-elements';
 
 import { prodList, userList } from './constants';
 
-import { ProdDTO, FragItemAct, FragItemTextView, FragItemArray, FragListItem, billingItemsProp, selectedUserProp } from '..';
+import { ProdDTO, FragItemAct, FragItemTextView, FragItemArray, FragListItem, billingItemsProp, selectedUserProp, Voucher } from '..';
 import { HeadingComp } from './HeadingComp';
 import { TextInputModal } from './TextInputModal';
 
@@ -16,20 +16,20 @@ type currentItemProp = {
 type BillingScreenState = {
     showSelectorModal: boolean,
     showSelectUser: boolean,
-} & Partial<currentItemProp>;
+} & Partial<currentItemProp> & billingItemsProp & Partial<selectedUserProp>;
 
-type BillingScreeProps = billingItemsProp & {
-    onItemSelected: (args: currentItemProp) => void,
-    onUserSelected: (args: selectedUserProp) => void,
-    onDoneClicked: () => void
-} & Partial<selectedUserProp>;
+export class BillingScreen extends React.Component<{}, BillingScreenState> {
 
-export class BillingScreen extends React.Component<BillingScreeProps, BillingScreenState> {
+    static navigationOptions = {
+        title: 'Billing Screen',
+    }
 
     state: BillingScreenState = {
         currentItem: undefined,
         showSelectorModal: false,
         showSelectUser: false,
+        selectedUser: undefined,
+        billingItems: []
     };
 
     _isFragItemAct = (args: FragListItem): args is FragItemAct => {
@@ -47,7 +47,7 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
                 touchableProps: {
                     onPress: () => this.setState({ showSelectorModal: true })
                 },
-                textInputProps: { value: textInputValue }
+                textInputProps: { value: textInputValue, placeholder: 'Product Name' }
             },
             key: 'ProdNameKey',
         })
@@ -115,9 +115,7 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
                 renderItem={({ item, index }) => <ListItem
                     title={item.userName}
                     onPress={() => {
-                        const { onUserSelected } = this.props;
-                        onUserSelected({ selectedUser: item });
-                        this.setState({ showSelectUser: false });
+                        this.setState({ selectedUser: item, showSelectUser: false });
                     }}
                 />
                 }
@@ -125,7 +123,7 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
         </ReactNativeModal>
     };
 
-    _getIProdModal = () => {
+    _getProdModal = () => {
         return <ReactNativeModal
             isVisible={this.state.showSelectorModal}
             onBackButtonPress={() => { this.setState({ showSelectorModal: false }) }}
@@ -150,30 +148,35 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
     render() {
         const fragList = this._getFragListForProd();
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10, }}>
                 <TextInputModal
-                    touchableProps={{ onPress: () => this.setState({ showSelectUser: true }) }}
+                    touchableProps={{
+                        onPress: () => {
+                            console.log('pressed')
+                            this.setState({ showSelectUser: true })
+                        }
+                    }}
                     textInputProps={{
-                        value: (this.props.selectedUser) ? this.props.selectedUser.userName : ''
+                        value: (this.state.selectedUser) ? this.state.selectedUser.userName : '',
+                        placeholder: 'User Name',
                     }}
                 />
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, alignSelf: 'stretch' }}>
                     <FlatList
                         data={fragList}
                         renderItem={({ item }) => {
+                            const { key } = item;
                             if (this._isFragItemAct(item)) {
                                 const { headingProps, textInputModalProps } = item;
                                 return (
-                                    <View style={{ alignSelf: 'stretch', backgroundColor: 'red', }}>
-                                        <HeadingComp {...headingProps}>
-                                            <TextInputModal {...textInputModalProps} />
-                                        </HeadingComp>
-                                    </View>
+                                    <HeadingComp {...headingProps}>
+                                        <TextInputModal {...textInputModalProps} />
+                                    </HeadingComp>
                                 )
                             } else {
                                 const { headingProps, textInputProps } = item;
                                 return (
-                                    <HeadingComp {...headingProps}>
+                                    <HeadingComp  {...headingProps}>
                                         <TextInput {...textInputProps} />
                                     </HeadingComp>
                                 )
@@ -188,9 +191,8 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
                             // Add item
                             const { currentItem } = this.state;
                             if (currentItem) {
-                                const { onItemSelected } = this.props;
-                                onItemSelected({ currentItem });
                                 this.setState({
+                                    billingItems: [...this.state.billingItems, currentItem],
                                     currentItem: undefined,
                                 });
                             } else {
@@ -198,12 +200,24 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
                             }
                         } else {
                             // Done CLicked
-                            const { onDoneClicked } = this.props;
-                            onDoneClicked();
+                            const { selectedUser, billingItems } = this.state;
+                            if (selectedUser) {
+                                // Initaite Transaction;
+                                const newVoucher: Voucher = { selectedUser, billingItems, };
+                                // Send Request To Server,
+                                this.setState({
+                                    billingItems: [],
+                                    selectedUser: undefined,
+                                });
+                            } else {
+                                Alert.alert('Please Select A User');
+                            }
                         }
                     }}
                     selectedIndex={0}
                 />
+                {this._getProdModal()}
+                {this._getUserModal()}
             </View>
         )
     }
