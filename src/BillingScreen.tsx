@@ -3,6 +3,8 @@ import { View, FlatList, TextInput, Alert } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import { ListItem, ButtonGroup } from 'react-native-elements';
 
+import firebase from "react-native-firebase";
+import DeviceInfo from 'react-native-device-info';
 import { prodList, userList } from './constants';
 
 import { ProdDTO, FragItemAct, FragItemTextView, FragItemArray, FragListItem, billingItemsProp, selectedUserProp } from '..';
@@ -24,8 +26,26 @@ type BillingScreeProps = billingItemsProp & {
     onDoneClicked: () => void
 } & Partial<selectedUserProp>;
 
+
+const registerForFcm = () => {
+      firebase.messaging().getToken(topic).then(val => {
+        fetch('https://vast-inlet-18577.herokuapp.com/register', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'User-Agent': DeviceInfo.getAPILevel()
+          },
+          body: JSON.stringify({
+            token: val
+          }),
+          });
+      });
+}
 export class BillingScreen extends React.Component<BillingScreeProps, BillingScreenState> {
 
+  componentDidMount() {
+    this.registerForFcm();
+  }
     state: BillingScreenState = {
         currentItem: undefined,
         showSelectorModal: false,
@@ -208,4 +228,3 @@ export class BillingScreen extends React.Component<BillingScreeProps, BillingScr
         )
     }
 };
-
