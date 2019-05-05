@@ -1,12 +1,13 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
- * 
+ *
  * Generated with the TypeScript template
  * https://github.com/emin93/react-native-template-typescript
- * 
+ *
  * @format
  */
+import firebase from 'react-native-firebase';
 
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
@@ -21,6 +22,16 @@ const instructions = Platform.select({
 
 interface Props { }
 export default class App extends Component<Props> {
+  constructor(props) {
+    super(props);
+    firebase.auth()
+      .signInAnonymously()
+      .then(credential => {
+        if (credential) {
+          console.log('default app user ->', credential.user.toJSON());
+        }
+      });
+  }
   render() {
     return (
       // <View style={styles.container}>
